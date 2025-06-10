@@ -15,6 +15,7 @@ import CartScreen from './src/screens/CartScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SearchScreen from './src/screens/SearchScreen';
 import UserScreen from './src/screens/UserScreen';
+import MyOrdersScreen from './src/screens/MyOrdersScreen';
 import UpdateProfileScreen from './src/screens/UpdateProfileScreen';
 import { colors } from './src/constant/color';
 
@@ -36,6 +37,7 @@ function MainTabs() {
           else if (route.name === 'Cart') iconName = 'cart-outline';
           else if (route.name === 'Search') iconName = 'search-outline';
           else if (route.name === 'User') iconName = 'person-outline';
+          else if (route.name === 'Orders') iconName = 'list-outline';
 
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -62,6 +64,7 @@ function MainTabs() {
         tabBarBadge: cart.length > 0 ? cart.length : undefined,
         }}
       />
+      <Tab.Screen name="Orders" component={MyOrdersScreen} />
       
       <Tab.Screen name="User" component={UserScreen} 
       />
@@ -103,6 +106,11 @@ export default function App() {
     component={ProductScreen}
     options={{ title: 'Product Details' }}
   />
+  <Stack.Screen
+  name="MyOrders"
+  component={MyOrdersScreen}
+  options={{ title: 'My Orders' }}
+/>
   <Stack.Screen
     name="UpdateProfile"
     component={UpdateProfileScreen}

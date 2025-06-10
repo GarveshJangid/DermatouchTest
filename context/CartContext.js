@@ -5,20 +5,25 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-  };
+  const exists = cart.find((item) => item.id === product.id);
+  if (exists) {
+    // If already in cart, increase its quantity
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + product.quantity }
+          : item
+      )
+    );
+  } else {
+    // If new, add with given quantity
+    setCart((prev) => [...prev, { ...product, quantity: product.quantity }]);
+  }
+};
+
 
   const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
@@ -42,28 +47,59 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+
   const buyNow = () => {
-    if (cart.length === 0) {
-      Alert.alert('Cart is empty', 'Please add items before buying.');
-      return;
-    }
-    Alert.alert('Order Placed', 'Thank you for your purchase!');
-    setCart([]);
+  if (cart.length === 0) {
+    Alert.alert('Cart is empty', 'Please add items before buying.');
+    return;
+  }
+
+  const invalidItems = cart.filter(
+    (item) => item.quantity < (item.minimumOrderQuantity || 1)
+  );
+
+  if (invalidItems.length > 0) {
+    Alert.alert(
+      'Minimum Order Quantity Not Met',
+      `Please update quantities for ${invalidItems.length} items.`
+    );
+    return;
+  }
+
+  // Save the order with a timestamp
+  const order = {
+    id: Date.now(),
+    date: new Date().toLocaleString(),
+    items: cart,
   };
 
+  setOrders((prev) => [order, ...prev]); // add order to history
+  Alert.alert('Order Placed', 'Thank you for your purchase!');
+  setCart([]);
+};
+const cancelOrder = (orderId) => {
+  setOrders((prev) => prev.filter((order) => order.id !== orderId));
+};
+
+
+
+
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        incrementQuantity,
-        decrementQuantity,
-        buyNow,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+   <CartContext.Provider
+  value={{
+    cart,
+    orders,
+    addToCart,
+    removeFromCart,
+    incrementQuantity,
+    decrementQuantity,
+    buyNow,
+    cancelOrder, // ← expose it
+  }}
+>
+
+  {children}
+</CartContext.Provider>
   );
 };
 

@@ -100,34 +100,41 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 15,
     fontSize: 15,
     borderWidth: 1,
     borderColor: '#ddd',
     color: '#111',
   },
   categoryScroll: {
-    paddingHorizontal: 10,
-    paddingTop: 10,
+  paddingHorizontal: 10,
+  paddingTop: 12,
+  paddingBottom: 2, // Added
+  marginBottom: 20, // New: adds spacing from product grid
   },
   categoryButton: {
-    backgroundColor: '#e5e7eb',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginRight: 10,
+  backgroundColor: '#e5e7eb',
+  paddingHorizontal: 18, // Increased
+  paddingVertical: 0,   // Increased
+  borderRadius: 15,
+  marginRight: 12,
+  alignItems: 'center', // ✅ center horizontally
+  justifyContent: 'center', // ✅ center vertically
   },
   selectedCategory: {
     backgroundColor: '#10b981',
   },
   categoryText: {
-    fontSize: 14,
-    color: '#444',
-  },
+  fontSize: 14,
+  justifyContent : "center",
+  fontWeight: '100',
+  color: '#444',
+  lineHeight: 40,// ✅ add line height
+},
   selectedCategoryText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  color: '#fff',
+  fontWeight: 'bold',
+},
   listContent: {
     padding: 10,
   },
