@@ -24,35 +24,34 @@ export default function CartScreen({ navigation }) {
     cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
 
   const renderItem = ({ item }) => (
-  <TouchableOpacity onPress={() => navigation.navigate('Product', { product: item })}>
-    <View style={styles.itemContainer}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <View style={styles.info}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.price}>${item.price.toFixed(2)} x {item.quantity}</Text>
-        <View style={styles.counterContainer}>
-          <TouchableOpacity
-            style={styles.counterBtn}
-            onPress={() => decrementQuantity(item.id)}
-          >
-            <Text style={styles.counterText}>−</Text>
-          </TouchableOpacity>
-          <Text style={styles.quantity}>{item.quantity}</Text>
-          <TouchableOpacity
-            style={styles.counterBtn}
-            onPress={() => incrementQuantity(item.id)}
-          >
-            <Text style={styles.counterText}>+</Text>
-          </TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate('Product', { product: item })}>
+      <View style={styles.itemContainer}>
+        <Image source={{ uri: item.image }} style={styles.image} />
+        <View style={styles.info}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.price}>${item.price.toFixed(2)} x {item.quantity}</Text>
+          <View style={styles.counterContainer}>
+            <TouchableOpacity
+              style={styles.counterBtn}
+              onPress={() => decrementQuantity(item.id)}
+            >
+              <Text style={styles.counterText}>−</Text>
+            </TouchableOpacity>
+            <Text style={styles.quantity}>{item.quantity}</Text>
+            <TouchableOpacity
+              style={styles.counterBtn}
+              onPress={() => incrementQuantity(item.id)}
+            >
+              <Text style={styles.counterText}>+</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+        <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+          <Text style={styles.removeText}>🗑️</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-        <Text style={styles.removeText}>🗑️</Text>
-      </TouchableOpacity>
-    </View>
-  </TouchableOpacity>
-);
-
+    </TouchableOpacity>
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -71,7 +70,15 @@ export default function CartScreen({ navigation }) {
 
           <View style={styles.footer}>
             <Text style={styles.totalText}>Total: ${getTotalPrice()}</Text>
-            <TouchableOpacity style={styles.buyButton} onPress={buyNow}>
+            <TouchableOpacity
+              style={styles.buyButton}
+              onPress={() => {
+                const isValid = buyNow();
+                if (isValid) {
+                  navigation.navigate('AddressSelection');
+                }
+              }}
+            >
               <Text style={styles.buyButtonText}>Buy Now</Text>
             </TouchableOpacity>
           </View>

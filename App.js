@@ -13,9 +13,12 @@ import HomeScreen from './src/screens/HomeScreen';
 import ProductScreen from './src/screens/ProductScreen';
 import CartScreen from './src/screens/CartScreen';
 import LoginScreen from './src/screens/LoginScreen';
-import SearchScreen from './src/screens/SearchScreen';
+import AddressSelectionScreen from './src/screens/AddressSelectionScreen';
+import AddAddressScreen from './src/screens/AddAddressScreen';
+import CheckoutScreen from './src/screens/CheckoutScreen';
 import UserScreen from './src/screens/UserScreen';
 import MyOrdersScreen from './src/screens/MyOrdersScreen';
+import OrderDetailScreen from './src/screens/OrderDetailScreen';
 import UpdateProfileScreen from './src/screens/UpdateProfileScreen';
 import { colors } from './src/constant/color';
 
@@ -35,7 +38,6 @@ function MainTabs() {
           let iconName;
           if (route.name === 'Home') iconName = 'home-outline';
           else if (route.name === 'Cart') iconName = 'cart-outline';
-          else if (route.name === 'Search') iconName = 'search-outline';
           else if (route.name === 'User') iconName = 'person-outline';
           else if (route.name === 'Orders') iconName = 'list-outline';
 
@@ -106,16 +108,21 @@ export default function App() {
     component={ProductScreen}
     options={{ title: 'Product Details' }}
   />
+  <Stack.Screen name="AddressSelection" component={AddressSelectionScreen} />
+<Stack.Screen name="AddAddress" component={AddAddressScreen} />
+<Stack.Screen name="Checkout" component={CheckoutScreen} />
   <Stack.Screen
   name="MyOrders"
   component={MyOrdersScreen}
   options={{ title: 'My Orders' }}
 />
+<Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
   <Stack.Screen
     name="UpdateProfile"
     component={UpdateProfileScreen}
     options={{ title: 'Edit Profile' }}
   />
+
 </Stack.Navigator>
 
         </NavigationContainer>

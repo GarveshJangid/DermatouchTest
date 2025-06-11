@@ -35,47 +35,46 @@ export default function MyOrdersScreen() {
     ]);
   };
 
-  const renderItem = ({ item }) => (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-    <View style={styles.orderCard}>
-      <View style={styles.orderHeader}>
-        <Text style={styles.orderDate}>🗓 {item.date}</Text>
-        <TouchableOpacity onPress={() => handleCancel(item.id)}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
+ const renderItem = ({ item }) => (
+  <TouchableOpacity
+    onPress={() => navigation.navigate('OrderDetail', { order: item })}
+    style={styles.orderCard}
+  >
+    <View style={styles.orderHeader}>
+      <Text style={styles.orderDate}>🗓 {item.date}</Text>
+      <TouchableOpacity onPress={() => handleCancel(item.id)}>
+        <Text style={styles.cancelText}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
 
-      {item.items.map((prod, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.card}
-          onPress={() => navigation.navigate('Product', { product: prod })}
-        >
-          <Image
-            source={{ uri: prod.thumbnail || prod.image }}
-            style={styles.image}
-          />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title} numberOfLines={2}>
-              {prod.title}
-            </Text>
-            <Text style={styles.price}>
-              ${prod.price.toFixed(2)} × {prod.quantity}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </View>
-    </View>
-  );
+    {item.items.map((prod, index) => (
+      <View key={index} style={styles.card}>
+        <Image
+          source={{ uri: prod.thumbnail || prod.image }}
+          style={styles.image}
+        />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title} numberOfLines={2}>
+            {prod.title}
+          </Text>
+          <Text style={styles.price}>
+            ${prod.price.toFixed(2)} × {prod.quantity}
+          </Text>
+        </View>
+      </View>
+    ))}
+  </TouchableOpacity>
+);
 
   return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
     <FlatList
       data={orders}
       keyExtractor={(item) => item.id.toString()}
       renderItem={renderItem}
       contentContainerStyle={styles.container}
     />
+    </View>
   );
 }
 

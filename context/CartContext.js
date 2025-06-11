@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 import React, { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -6,6 +8,7 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [userAddress, setUserAddress] = useState(null);
 
   const addToCart = (product) => {
   const exists = cart.find((item) => item.id === product.id);
@@ -51,7 +54,7 @@ export const CartProvider = ({ children }) => {
   const buyNow = () => {
   if (cart.length === 0) {
     Alert.alert('Cart is empty', 'Please add items before buying.');
-    return;
+    return false;
   }
 
   const invalidItems = cart.filter(
@@ -61,25 +64,47 @@ export const CartProvider = ({ children }) => {
   if (invalidItems.length > 0) {
     Alert.alert(
       'Minimum Order Quantity Not Met',
-      `Please update quantities for ${invalidItems.length} items.`
+      `Please update quantities for ${invalidItems.length} item(s).`
     );
-    return;
+    return false;
   }
 
-  // Save the order with a timestamp
-  const order = {
-    id: Date.now(),
-    date: new Date().toLocaleString(),
-    items: cart,
-  };
-
-  setOrders((prev) => [order, ...prev]); // add order to history
-  Alert.alert('Order Placed', 'Thank you for your purchase!');
-  setCart([]);
+  return true; // cart is valid
 };
+
+
 const cancelOrder = (orderId) => {
   setOrders((prev) => prev.filter((order) => order.id !== orderId));
 };
+
+useEffect(() => {
+  const loadOrders = async () => {
+    try {
+      const data = await AsyncStorage.getItem('orders');
+      if (data) {
+        setOrders(JSON.parse(data));
+      }
+    } catch (error) {
+      console.error('Error loading orders:', error);
+    }
+  };
+  loadOrders();
+}, []);
+
+
+
+// Save orders when updated
+useEffect(() => {
+  const saveOrders = async () => {
+    try {
+      await AsyncStorage.setItem('orders', JSON.stringify(orders));
+    } catch (error) {
+      console.error('Error saving orders:', error);
+    }
+  };
+
+  saveOrders();
+}, [orders]);
 
 
 
@@ -88,13 +113,17 @@ const cancelOrder = (orderId) => {
    <CartContext.Provider
   value={{
     cart,
+    setCart,
     orders,
+    setOrders,
     addToCart,
     removeFromCart,
     incrementQuantity,
     decrementQuantity,
     buyNow,
-    cancelOrder, // ← expose it
+    cancelOrder,
+    userAddress,     
+    setUserAddress,  
   }}
 >
 

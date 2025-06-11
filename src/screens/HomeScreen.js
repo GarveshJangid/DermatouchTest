@@ -42,7 +42,12 @@ export default function HomeScreen({ navigation }) {
     >
       <Image source={{ uri: item.thumbnail || item.image }} style={styles.image} />
       <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
-      <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+  <Text style={styles.discountPrice}>
+    ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
+  </Text>
+  <Text style={styles.originalPrice}>${item.price.toFixed(2)}</Text>
+</View>
     </TouchableOpacity>
   );
 
@@ -169,4 +174,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#16a34a',
   },
+  discountPrice: {
+  fontSize: 15,
+  fontWeight: 'bold',
+  color: '#16a34a',
+},
+originalPrice: {
+  fontSize: 12,
+  color: '#888',
+  textDecorationLine: 'line-through',
+},
 });

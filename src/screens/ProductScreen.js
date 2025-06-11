@@ -36,7 +36,15 @@ export default function ProductScreen({ route }) {
     return;
   }
 
-  addToCart({ ...product, quantity: qty });
+  const discountedPrice = parseFloat(
+  (product.price * (1 - product.discountPercentage / 100)).toFixed(2)
+);
+
+addToCart({
+  ...product,
+  price: discountedPrice, // ⬅ override with discounted price
+  quantity: qty,
+});
   Alert.alert('Success', 'Item added to cart');
 };
 
