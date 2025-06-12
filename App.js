@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, View, } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,8 +18,10 @@ import AddAddressScreen from './src/screens/AddAddressScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 import UserScreen from './src/screens/UserScreen';
 import MyOrdersScreen from './src/screens/MyOrdersScreen';
+import WishlistScreen from './src/screens/WishlistScreen';
 import OrderDetailScreen from './src/screens/OrderDetailScreen';
 import UpdateProfileScreen from './src/screens/UpdateProfileScreen';
+import { WishlistProvider } from './context/WishlistContext';
 import { colors } from './src/constant/color';
 
 
@@ -28,52 +30,44 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MainTabs() {
-  const { cart } = useCart();
-
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === 'Home') iconName = 'home-outline';
-          else if (route.name === 'Cart') iconName = 'cart-outline';
-          else if (route.name === 'User') iconName = 'person-outline';
-          else if (route.name === 'Orders') iconName = 'list-outline';
-
-          return <Icon name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colors.tabBarActive,
-        tabBarInactiveTintColor: colors.tabBarInactive,
+        tabBarShowLabel: false,
         tabBarStyle: {
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
-          backgroundColor: colors.white,
-          borderTopColor: colors.border,
+          height: 70,
+          backgroundColor: '#fff',
+          borderTopColor: '#eee',
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          switch (route.name) {
+            case 'Home': iconName = focused ? 'home' : 'home-outline'; break;
+            case 'Wishlist': iconName = focused ? 'heart' : 'heart-outline'; break;
+            case 'Orders': iconName = focused ? 'reader' : 'reader-outline'; break;
+            case 'Cart': iconName = focused ? 'bag' : 'bag-outline'; break;
+            case 'User': iconName = focused ? 'person' : 'person-outline'; break;
+          }
+
+          return (
+            <View style={{ alignItems: 'center' }}>
+              <Icon name={iconName} size={24} color={focused ? '#000' : '#3b82f6'} />
+              {focused && <View style={{ width: 20, height: 3, backgroundColor: '#000', marginTop: 4, borderRadius: 2 }} />}
+            </View>
+          );
         },
       })}
     >
-      
-      <Tab.Screen name="Home" component={HomeScreen}  />
-      <Tab.Screen
-        name="Cart"
-        component={CartScreen}
-        options={{
-        tabBarBadge: cart.length > 0 ? cart.length : undefined,
-        }}
-      />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Wishlist" component={WishlistScreen} />
       <Tab.Screen name="Orders" component={MyOrdersScreen} />
-      
-      <Tab.Screen name="User" component={UserScreen} 
-      />
+      <Tab.Screen name="Cart" component={CartScreen} />
+      <Tab.Screen name="User" component={UserScreen} />
     </Tab.Navigator>
-    
   );
 }
+
 
 export default function App() {
   useEffect(() => {
@@ -91,6 +85,7 @@ export default function App() {
     
     <AuthProvider>
       <CartProvider>
+          <WishlistProvider>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
   <Stack.Screen
@@ -126,6 +121,7 @@ export default function App() {
 </Stack.Navigator>
 
         </NavigationContainer>
+          </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   );
