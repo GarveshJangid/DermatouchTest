@@ -21,8 +21,8 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 // Responsive calculations
 const isSmallScreen = screenWidth < 375;
-const horizontalPadding = screenWidth * 0.04;
-const cardGap = screenWidth * 0.03;
+const horizontalPadding = screenWidth * 0.04; // 4% of screen width
+const cardGap = screenWidth * 0.03; // 3% gap between cards
 const cardWidth = (screenWidth - (horizontalPadding * 2) - cardGap) / 2;
 const categoriesPerRow = screenWidth < 375 ? 3 : 4;
 const categorySize = (screenWidth - (horizontalPadding * 2) - ((categoriesPerRow - 1) * 12)) / categoriesPerRow;
@@ -132,18 +132,18 @@ export default function HomeScreen({ navigation }) {
         const scrollDifference = currentScrollY - lastScrollY.current;
 
         // Hide categories when scrolling down, show when scrolling up
-        if (scrollDifference > 5 && currentScrollY > 50) {
-          // Scrolling down - hide
+        if (scrollDifference > 2 && currentScrollY > 20) {
+          // Scrolling down - hide faster
           Animated.timing(categoryHeight, {
             toValue: 0,
-            duration: 200,
+            duration: 150,
             useNativeDriver: false,
           }).start();
-        } else if (scrollDifference < -5 || currentScrollY < 50) {
-          // Scrolling up or near top - show
+        } else if (scrollDifference < -2 || currentScrollY < 20) {
+          // Scrolling up or near top - show faster
           Animated.timing(categoryHeight, {
             toValue: 1,
-            duration: 200,
+            duration: 150,
             useNativeDriver: false,
           }).start();
         }
@@ -155,12 +155,12 @@ export default function HomeScreen({ navigation }) {
 
   const categoryContainerHeight = categoryHeight.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, categorySize + 52], // Category size + margins + gap
+    outputRange: [0, categorySize + 40], // Category size + margins
   });
 
   const categoryOpacity = categoryHeight.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [0, 0.3, 1],
+    outputRange: [0, 0, 1],
   });
 
   return (
@@ -179,20 +179,10 @@ export default function HomeScreen({ navigation }) {
         />
       </View>
 
-      {/* Animated Category Grid */}
-      <Animated.View 
-        style={[
-          styles.categoryGridContainer,
-          {
-            height: categoryContainerHeight,
-            opacity: categoryOpacity,
-          }
-        ]}
-      >
-        <View style={styles.categoryGrid}>
-          {categories.slice(0, 8).map(renderCategoryItem)}
-        </View>
-      </Animated.View>
+      {/* Category Grid */}
+      <View style={styles.categoryGrid}>
+        {categories.slice(0, 8).map(renderCategoryItem)}
+      </View>
 
       {/* Products Header */}
       <View style={styles.rowHeader}>
@@ -221,8 +211,6 @@ export default function HomeScreen({ navigation }) {
           contentContainerStyle={styles.listContent}
           columnWrapperStyle={styles.columnWrapper}
           showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
         />
       ) : (
         <View style={styles.emptyState}>
@@ -309,7 +297,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    paddingTop: screenHeight * 0.06,
+    paddingTop: screenHeight * 0.06, // 6% of screen height
     paddingHorizontal: horizontalPadding,
   },
   topBar: {
@@ -333,9 +321,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border,
     color: theme.colors.text.primary,
-  },
-  categoryGridContainer: {
-    overflow: 'hidden',
   },
   categoryGrid: {
     flexDirection: 'row',
@@ -381,7 +366,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   filterButton: {
-    padding: 8,
+    padding: 8, // Larger touch target
   },
   filterIcon: {
     width: 20,
@@ -411,7 +396,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: cardWidth * 0.75,
+    height: cardWidth * 0.75, // Proportional to card width
     marginBottom: 10,
     borderRadius: theme.borderRadius.sm,
   },
@@ -490,7 +475,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   resetButton: {
-    padding: 8,
+    padding: 8, // Larger touch target
   },
   resetText: {
     fontSize: theme.typography.sizes.base,
@@ -507,7 +492,7 @@ const styles = StyleSheet.create({
   optionButton: {
     paddingVertical: 12,
     paddingHorizontal: 4,
-    minHeight: 44,
+    minHeight: 44, // Minimum touch target height
   },
   modalOption: {
     fontSize: theme.typography.sizes.base,
@@ -524,7 +509,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 24,
     paddingVertical: 8,
-    minHeight: 44,
+    minHeight: 44, // Minimum touch target height
   },
   applyButton: {
     backgroundColor: theme.colors.primary,
@@ -537,7 +522,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
-    minHeight: 52,
+    minHeight: 52, // Larger touch target
   },
   applyButtonText: {
     color: theme.colors.background,
